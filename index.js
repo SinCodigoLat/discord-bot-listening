@@ -2,6 +2,17 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const axios = require('axios');
 const http = require('http');
 
+// Acceder a los secrets configurados en Railway
+const BOT_TOKEN = process.env.BOT_TOKEN; // Token del bot de Discord
+const N8N_API_KEY = process.env.N8N_API_KEY; // API key de n8n
+const N8N_ENDPOINT = process.env.N8N_ENDPOINT; // Endpoint de la API de n8n
+
+// Verificar que el token esté presente
+if (!BOT_TOKEN) {
+  console.error('Error: El token de Discord no está configurado correctamente.');
+  process.exit(1); // Salir del proceso si no se encuentra el token
+}
+
 // Crear el cliente de Discord con las intenciones correctas
 const client = new Client({
   intents: [
@@ -10,11 +21,6 @@ const client = new Client({
     GatewayIntentBits.MessageContent
   ],
 });
-
-// Acceder a los secrets configurados en Replit
-const BOT_TOKEN = process.env.BOT_TOKEN; // Token del bot de Discord
-const N8N_API_KEY = process.env.N8N_API_KEY; // API key de n8n
-const N8N_ENDPOINT = process.env.N8N_ENDPOINT; // Endpoint de la API de n8n
 
 // Lista de IDs de canales donde el bot no deberá responder
 const excludedChannels = ['1231991368549793873']; // Añade aquí los IDs de los canales que deseas excluir
@@ -26,7 +32,7 @@ client.on('ready', () => {
 
 // Evento para detectar cualquier mensaje en los canales donde está el bot
 client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
+  if (message.author.bot) return; // Ignorar mensajes de otros bots
 
   if (excludedChannels.includes(message.channel.id)) {
     console.log(`Mensaje en canal excluido: ${message.channel.name} (ID: ${message.channel.id})`);
